@@ -9,7 +9,7 @@ namespace ConsolaLab2
     {
         static void Main(string[] args)
         {
-            string Example = "Pero recuerda(nadie es perfecto y tú lo verás) (Más de mil cosas mejores tendrás, pero cariño sincero jamás)Vete olvidando, de esto que hoy dejas y que cambiarás Por la aventura que tú ya verás Será tu cárcel y nunca saldrás";
+            string Example = "Ammmissttaadeeeeee      quuvnnnyp";
             var huffman = new Huffman<char>(Example);
             
             List<int> encoding = huffman.Encode(Example);

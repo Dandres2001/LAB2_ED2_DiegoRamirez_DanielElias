@@ -7,12 +7,13 @@ namespace LibreriaRD3
     
      public class Huffman<T> : ICompressor<T> where T : IComparable
         {
-            private readonly Dictionary<T, HuffmanNode<T>> _leafDictionary = new Dictionary<T, HuffmanNode<T>>();
-            private readonly HuffmanNode<T> _root;
+            public Dictionary<T, HuffmanNode<T>> _leafDictionary = new Dictionary<T, HuffmanNode<T>>();
+        public Dictionary<T, int> countsDictionary = new Dictionary<T, int>();
+        private readonly HuffmanNode<T> _root;
 
             public Huffman(IEnumerable<T> values)
             {
-                var countsDictionary = new Dictionary<T, int>();
+  
                 var priorityQueue = new minHeap<HuffmanNode<T>>();
                 int valueCount = 0;
 
@@ -131,6 +132,7 @@ namespace LibreriaRD3
                 string str = encEncoder.GetString(getbytesfrombinarystrin(bytearray));
                 bytearray = "";
 
+                    
                 returvalue.Add(str);
                  
             }
