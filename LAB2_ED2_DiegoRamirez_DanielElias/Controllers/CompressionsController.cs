@@ -122,9 +122,78 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
                 i++;
                 j++;
             }
+
+
+            List<string> asciivalues = new List<string>();
+
+            var encoder = Encoding.GetEncoding(28591);
+            string currentletter = "";
+       string  mensajeordenado =  message(apariciones);
+            var huffman = new Huffman<char>(mensajeordenado);
+            for (int k = 0; k< mensaje.Length; k++)
+            {
+                currentletter = mensaje[k].ToString();
+               currentletter = encoder.GetString(ConvertToByte(currentletter));
+                asciivalues.Add(currentletter);
+                
+                if (mensaje[k] == 0)
+                {
+                    break;
+                }
+            }
+
+            List<int> decodeascii = huffman.decodeascii(asciivalues,byteTamaño[0]);
+            List<char> decoding = huffman.Decode(decodeascii);
+    
+
             return null;
         }
         
+        public string  message(byte[] aparaciones)
+        {
+            string mensaje = "";
+            string currentletter = "";
+            string currentthing = "";
+            int frecuencia = 0;
+            int i = 0;
+            var encoder = Encoding.GetEncoding(28591);
+            while  (aparaciones[i] != 0)
+            {
+                if  (i != 0)
+                {
+                    if (i %2 == 0)
+                    {
+                        currentletter = aparaciones[i].ToString();
+                      currentthing = encoder.GetString(ConvertToByte(currentletter));
+                    }
+                    else
+                    {
+                        frecuencia = aparaciones[i];
+                        for (int j = 0; j < frecuencia; j++)
+                        {
+                            mensaje += currentthing;
+                        }
+                    }
+                }
+                else
+                {
+                    currentletter = aparaciones[i].ToString();
+                    currentthing = encoder.GetString(ConvertToByte(currentletter));
+                }
+
+               
+                i++;
+            }
+            return mensaje;
+        }
+        public Byte[] ConvertToByte(string binary)
+        {
+            var list = new List<Byte>();
+
+            list.Add(Convert.ToByte(binary));
+
+            return list.ToArray();
+        }
         public double CalcularFactorCompresion(double BytesOriginal, double BytesComprimido)
         {
             double Factor = Math.Round(BytesOriginal / BytesComprimido, 3);

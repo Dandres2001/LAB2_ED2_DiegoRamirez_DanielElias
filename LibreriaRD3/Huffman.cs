@@ -19,6 +19,7 @@ namespace LibreriaRD3
 
                 foreach (T value in values)
                 {
+
                     if (!countsDictionary.ContainsKey(value))
                     {
                         countsDictionary[value] = 0;
@@ -28,7 +29,8 @@ namespace LibreriaRD3
                 }
 
                 foreach (T value in countsDictionary.Keys)
-                {
+                { 
+                  
                     var node = new HuffmanNode<T>((double)countsDictionary[value] / valueCount, value);
                     priorityQueue.Add(node);
                     _leafDictionary[value] = node;

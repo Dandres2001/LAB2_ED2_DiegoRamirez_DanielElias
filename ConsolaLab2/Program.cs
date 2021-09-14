@@ -9,7 +9,7 @@ namespace ConsolaLab2
     {
         static void Main(string[] args)
         {
-            string Example = "Ammmissttaadeeeeee      quuvnnnyp";
+            string Example = "bbeecita";
             var huffman = new Huffman<char>(Example);
             
             List<int> encoding = huffman.Encode(Example);
