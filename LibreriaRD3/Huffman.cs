@@ -7,8 +7,8 @@ namespace LibreriaRD3
     
      public class Huffman<T> : ICompressor<T> where T : IComparable
         {
-            public Dictionary<T, HuffmanNode<T>> _leafDictionary = new Dictionary<T, HuffmanNode<T>>();
-        public Dictionary<T, int> countsDictionary = new Dictionary<T, int>();
+        public Dictionary<T, HuffmanNode<T>> prefixDictionary = new Dictionary<T, HuffmanNode<T>>();
+        public Dictionary<T, int> appearancesDictionary = new Dictionary<T, int>();
         private readonly HuffmanNode<T> _root;
 
             public Huffman(IEnumerable<T> values)
@@ -20,20 +20,20 @@ namespace LibreriaRD3
                 foreach (T value in values)
                 {
 
-                    if (!countsDictionary.ContainsKey(value))
+                    if (!appearancesDictionary.ContainsKey(value))
                     {
-                        countsDictionary[value] = 0;
+                        appearancesDictionary[value] = 0;
                     }
-                    countsDictionary[value]++;
+                    appearancesDictionary[value]++;
                     valueCount++;
                 }
 
-                foreach (T value in countsDictionary.Keys)
+                foreach (T value in appearancesDictionary.Keys)
                 { 
                   
-                    var node = new HuffmanNode<T>((double)countsDictionary[value] / valueCount, value);
+                    var node = new HuffmanNode<T>((double)appearancesDictionary[value] / valueCount, value);
                     priorityQueue.Add(node);
-                    _leafDictionary[value] = node;
+                    prefixDictionary[value] = node;
                 }
 
                 while (priorityQueue.Count > 1)
@@ -57,11 +57,11 @@ namespace LibreriaRD3
 
             public void Encode(T value, List<int> encoding)
             {
-                if (!_leafDictionary.ContainsKey(value))
+                if (!prefixDictionary.ContainsKey(value))
                 {
-                    throw new ArgumentException("Invalid value in Encode");
+                return;
                 }
-                HuffmanNode<T> nodeCur = _leafDictionary[value];
+                HuffmanNode<T> nodeCur = prefixDictionary[value];
                 var reverseEncoding = new List<int>();
                 while (!nodeCur.IsRoot)
                 {
@@ -82,7 +82,7 @@ namespace LibreriaRD3
                     Encode(value, returnValue);
                 }
 
-            //decodeascii(Encodeascii(returnValue));
+         
             
             return returnValue;
             }
@@ -95,7 +95,6 @@ namespace LibreriaRD3
 
             }
             var returvalue = new List<string>();
-            //var bytearray = new List<int>();
             string bytearray = ""; 
 
             while (values != null)
@@ -107,14 +106,7 @@ namespace LibreriaRD3
                     {
                         bytearray += values[i];
                     }
-                    //if (values.Count < 8)
-                    //{
-                    //   for (int  j = bytearray.Length; j < 8; j++)
-                    //    {
-                    //        bytearray += "0";
-
-                    //    }
-                    //}
+     
                 }
                 if (values.Count > 8)
                 {
@@ -131,7 +123,7 @@ namespace LibreriaRD3
 
                 var encEncoder = System.Text.Encoding.GetEncoding(28591);
 
-                string str = encEncoder.GetString(getbytesfrombinarystrin(bytearray));
+                string str = encEncoder.GetString(GetBytesFromBinaryString(bytearray));
                 bytearray = "";
 
                     
@@ -144,7 +136,7 @@ namespace LibreriaRD3
 
         public List<int> decodeascii(List<string> value, int largo)
         {
-            //int i = 0;
+           
             string current = "";
             byte[] bytearray;
             var returvalue = new List<int>();
@@ -181,7 +173,7 @@ namespace LibreriaRD3
             return returvalue2;
         }
 
-        public Byte[] getbytesfrombinarystrin(string binary)
+        public Byte[] GetBytesFromBinaryString(string binary)
         {
             var list = new List<Byte>();
          
@@ -219,7 +211,7 @@ namespace LibreriaRD3
                 return nodeCur.Value;
             }
 
-            public List<T> Decode(List<int> bitString) //este es  el que se llama
+            public List<T> Decode(List<int> bitString) 
             {
                 int position = 0;
                 var returnValue = new List<T>();

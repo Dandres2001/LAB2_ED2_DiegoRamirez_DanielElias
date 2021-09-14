@@ -14,7 +14,7 @@ using System.Text.Json;
 
 namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class CompressionsController : ControllerBase
     {
@@ -58,8 +58,8 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             
             //COMPRIMIENDO TEXTO
             var huffman = new Huffman<char>(texto);
-            var keys = huffman.countsDictionary.Keys;
-            var values = huffman.countsDictionary.Values;
+            var keys = huffman.appearancesDictionary.Keys;
+            var values = huffman.appearancesDictionary.Values;
             List<string> apariciones = new List<string>();
             var encoder = Encoding.GetEncoding(28591);
             string aux = "";
@@ -84,11 +84,13 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             string NombreComprimido = name + ".huff";
             double factorDeCompresion = CalcularFactorCompresion(bytesOriginal, dataAsBytes.Length);
             double razonDeCompresion = CalcularRazonCompresion(bytesOriginal, dataAsBytes.Length);
+            string PorcentajeReducion = CalcularPorcentajeReducción(razonDeCompresion);
 
             newCompression.NombreOriginal = NombreOriginal;
             newCompression.NombreRutadeArchivo = NombreComprimido;
             newCompression.FactorCompresion = factorDeCompresion;
             newCompression.RazonCompresion = razonDeCompresion;
+            newCompression.PorcentajeReduccion = PorcentajeReducion;
 
             Singleton.Instance.CompList.Add(newCompression);
             #endregion
@@ -149,7 +151,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
 
             var encoder = Encoding.GetEncoding(28591);
             string currentletter = "";
-       string  mensajeordenado =  message(apariciones);
+            string  mensajeordenado =  message(apariciones);
             var huffman = new Huffman<char>(mensajeordenado);
             for (int k = 0; k< mensaje.Length; k++)
             {
@@ -165,9 +167,22 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
 
             List<int> decodeascii = huffman.decodeascii(asciivalues,byteTamaño[0]);
             List<char> decoding = huffman.Decode(decodeascii);
+            var lista = Singleton.Instance.CompList;
+            var stringFinal = new string(decoding.ToArray());
+            byte[] bytesFinales = Encoding.GetEncoding(28591).GetBytes(stringFinal);
+            string NombreOriginal;
+            try
+            {
+                NombreOriginal = lista.ElementAt(lista.Count - 1).NombreOriginal;
+            }
+            catch
+            {
+                NombreOriginal = "default";
+            }
+        
     
-
-            return null;
+           
+            return base.File(bytesFinales,"text/plain", NombreOriginal);
         }
         
         public string  message(byte[] aparaciones)
@@ -207,6 +222,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             }
             return mensaje;
         }
+        //Algoritmo para convertir de string a binario
         public Byte[] ConvertToByte(string binary)
         {
             var list = new List<Byte>();
@@ -225,18 +241,14 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             double Razon = Math.Round(BytesComprimido / BytesOriginal, 3);
             return Razon;
         }
-
-        public static string StringToBinary(string data)
+        public string CalcularPorcentajeReducción(double factorDeCompresión)
         {
-            StringBuilder sb = new StringBuilder();
-
-            foreach (char c in data.ToCharArray())
-            {
-                sb.Append(Convert.ToString(c, 2).PadLeft(8, '0'));
-            }
-            return sb.ToString();
+            double Porcentaje = Math.Round((1 - factorDeCompresión)*100);
+            string resultado = Porcentaje + "%";
+            return resultado;
         }
 
+        //Algoritmo para combinar arrays de tipo byte
         private byte[] Combine(params byte[][] arrays)
         {
             byte[] rv = new byte[arrays.Sum(a => a.Length)];

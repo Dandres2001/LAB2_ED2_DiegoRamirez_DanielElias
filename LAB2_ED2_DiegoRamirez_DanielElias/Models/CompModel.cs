@@ -16,6 +16,6 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Models
 
         public double FactorCompresion { get; set; }
 
-        public double PorcentajeReduccion { get; set; }
+        public string PorcentajeReduccion { get; set; }
     }
 }
