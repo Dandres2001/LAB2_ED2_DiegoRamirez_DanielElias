@@ -9,10 +9,10 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Data
     public sealed class Singleton
     {
         private readonly static Singleton _instance = new Singleton();
-        public List<Compressions> CompList; 
+        public List<CompModel> CompList; 
         private Singleton()
         {
-            CompList = new List<Compressions>();
+            CompList = new List<CompModel>();
         }
 
         public static Singleton Instance

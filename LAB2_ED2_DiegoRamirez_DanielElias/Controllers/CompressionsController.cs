@@ -9,6 +9,7 @@ using LAB2_ED2_DiegoRamirez_DanielElias.Models;
 using LAB2_ED2_DiegoRamirez_DanielElias.Data;
 using LibreriaRD3;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
@@ -17,14 +18,34 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
     [ApiController]
     public class CompressionsController : ControllerBase
     {
-       
-         [HttpGet]
+
+        [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
         // GET api/<CompressionsController>/5
-   
+        
+        [HttpGet("compressions")]
+        public string GetCompressions([FromRoute] string recorrido)
+        {
+            string returnJson = "";
+
+            try
+            {
+                for (int i = 0; i < Singleton.Instance.CompList.Count; i++)
+                {
+                    returnJson += JsonSerializer.Serialize<CompModel>(Singleton.Instance.CompList.ElementAt(i));
+                }
+
+            }
+            catch
+            {
+
+
+            }
+            return returnJson;
+        }
 
         // POST api/<CompressionsController>
         [HttpPost("compress/{name}")]
@@ -57,7 +78,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
 
             //ARCHIVANDO COMPRESION
             #region
-            var newCompression = new Compressions();
+            var newCompression = new CompModel();
             string NombreOriginal = File.FileName;
             double bytesOriginal = Convert.ToDouble(File.Length);
             string NombreComprimido = name + ".huff";
