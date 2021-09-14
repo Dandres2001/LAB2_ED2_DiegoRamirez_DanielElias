@@ -39,22 +39,22 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             var huffman = new Huffman<char>(texto);
             var keys = huffman.countsDictionary.Keys;
             var values = huffman.countsDictionary.Values;
-
             List<string> apariciones = new List<string>();
-           
-    
+            var encoder = Encoding.GetEncoding(28591);
+            string aux = "";
             for (int i = 0; i < keys.Count(); i++)
             {
                 apariciones.Add(keys.ElementAt(i).ToString());
-                apariciones.Add(values.ElementAt(i).ToString());
+                aux = encoder.GetString(huffman.ConvertToByte(values.ElementAt(i).ToString()));
+                apariciones.Add(aux);
             }
-           byte[] bytearray = apariciones.SelectMany(s=>Encoding.GetEncoding(28591).GetBytes(s)).ToArray();
-            var encoder = Encoding.GetEncoding(28591);
-            //byte[] aparicionesBytes = 
-
+            byte[] bytearray = apariciones.SelectMany(s=> Encoding.GetEncoding(28591).GetBytes(s)).ToArray();
             List<int> encoding = huffman.Encode(texto);
+            string largo = encoder.GetString(huffman.ConvertToByte(encoding.Count.ToString()));
+            byte[] arrayLargo = Encoding.GetEncoding(28591).GetBytes(largo).ToArray();
             List<string> compressed = huffman.Encodeascii(encoding);
             byte[] dataAsBytes = compressed.SelectMany(s => Encoding.GetEncoding(28591).GetBytes(s)).ToArray();
+
             //ARCHIVANDO COMPRESION
             #region
             var newCompression = new Compressions();
@@ -72,20 +72,55 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             Singleton.Instance.CompList.Add(newCompression);
             #endregion
 
-            return base.File(dataAsBytes, "compressedFile / huff", name + ".huff");
+            //ESCRIBIENDO ARCHIVO
+            string text = bytearray + "\n" + dataAsBytes;
+            byte[] nullarray = { default };
+
+
+            return base.File(Combine(arrayLargo, nullarray, bytearray,nullarray,dataAsBytes), "compressedFile / huff", name + ".huff");
         }
 
         // PUT api/<CompressionsController>/5
         [HttpPost("decompress")]
         public async Task<FileResult> Decompress([FromForm] IFormFile File)
         {
-            
+            byte[] bytes;
             using (var memory = new MemoryStream())
             {
                 await File.CopyToAsync(memory);
-                byte[] bytes = memory.ToArray();
+                bytes = memory.ToArray();
                 List<byte> aux = bytes.OfType<byte>().ToList();
+
+            }
+            int i = 0;
+            byte[] byteTamaño = new byte[bytes.Length];
+            byte[] apariciones = new byte[bytes.Length];
+            byte[] mensaje = new byte[bytes.Length];
+            int j = 0;
+            while (bytes[i] != 0)
+            {
                 
+                byteTamaño[j] = bytes[i];
+                i++;
+                j++;
+            }
+            i++;
+            j = 0;
+            while (bytes[i] != 0)
+            {
+                
+                apariciones[j] = bytes[i];
+                i++;
+                j++;
+            }
+            i++;
+            j = 0;
+            while (i != bytes.Length)
+            {
+               
+                mensaje[j] = bytes[i];
+                i++;
+                j++;
             }
             return null;
         }
@@ -110,6 +145,18 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
                 sb.Append(Convert.ToString(c, 2).PadLeft(8, '0'));
             }
             return sb.ToString();
+        }
+
+        private byte[] Combine(params byte[][] arrays)
+        {
+            byte[] rv = new byte[arrays.Sum(a => a.Length)];
+            int offset = 0;
+            foreach (byte[] array in arrays)
+            {
+                System.Buffer.BlockCopy(array, 0, rv, offset, array.Length);
+                offset += array.Length;
+            }
+            return rv;
         }
     }
 }

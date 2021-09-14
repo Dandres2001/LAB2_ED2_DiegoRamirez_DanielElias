@@ -187,7 +187,16 @@ namespace LibreriaRD3
          
             return list.ToArray();
         }
-            public T Decode(List<int> bitString, ref int position)
+
+        public Byte[] ConvertToByte(string binary)
+        {
+            var list = new List<Byte>();
+
+            list.Add(Convert.ToByte(binary));
+
+            return list.ToArray();
+        }
+        public T Decode(List<int> bitString, ref int position)
             {
                 HuffmanNode<T> nodeCur = _root;
             try
