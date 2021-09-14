@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LAB2_ED2_DiegoRamirez_DanielElias.Models
 {
-    public class Compressions
+    public class CompModel
     {
 
         public string NombreOriginal { get; set; }
