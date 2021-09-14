@@ -9,7 +9,11 @@ using LAB2_ED2_DiegoRamirez_DanielElias.Models;
 using LAB2_ED2_DiegoRamirez_DanielElias.Data;
 using LibreriaRD3;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using System.Text.Json;
+using System.Web;
+using System.Net;
+using System.Net.Http.Headers;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
@@ -51,7 +55,8 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         [HttpPost("compress/{name}")]
         public FileResult Compress([FromRoute] string name,[FromForm] IFormFile File)
         {
-           
+            
+            
             var reader = new StreamReader(File.OpenReadStream());
             string texto = reader.ReadToEnd();
             reader.Close();
@@ -81,13 +86,15 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             var newCompression = new CompModel();
             string NombreOriginal = File.FileName;
             double bytesOriginal = Convert.ToDouble(File.Length);
-            string NombreComprimido = name + ".huff";
+            string NombreComprimido = ".huff";
             double factorDeCompresion = CalcularFactorCompresion(bytesOriginal, dataAsBytes.Length);
             double razonDeCompresion = CalcularRazonCompresion(bytesOriginal, dataAsBytes.Length);
             string PorcentajeReducion = CalcularPorcentajeReducción(razonDeCompresion);
-
+            var url = Request.Path;
+            var requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+            string rutaYnombre = requestUrl + url + NombreComprimido; 
             newCompression.NombreOriginal = NombreOriginal;
-            newCompression.NombreRutadeArchivo = NombreComprimido;
+            newCompression.NombreRutadeArchivo = rutaYnombre;
             newCompression.FactorCompresion = factorDeCompresion;
             newCompression.RazonCompresion = razonDeCompresion;
             newCompression.PorcentajeReduccion = PorcentajeReducion;
@@ -107,10 +114,14 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         [HttpPost("decompress")]
         public async Task<FileResult> Decompress([FromForm] IFormFile File)
         {
+          
+           
             byte[] bytes;
             using (var memory = new MemoryStream())
             {
                 await File.CopyToAsync(memory);
+                
+                
                 bytes = memory.ToArray();
                 List<byte> aux = bytes.OfType<byte>().ToList();
 
@@ -171,14 +182,16 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             var stringFinal = new string(decoding.ToArray());
             byte[] bytesFinales = Encoding.GetEncoding(28591).GetBytes(stringFinal);
             string NombreOriginal;
-            try
-            {
-                NombreOriginal = lista.ElementAt(lista.Count - 1).NombreOriginal;
-            }
-            catch
+
+            if (lista.Count == 0)
             {
                 NombreOriginal = "default";
             }
+            else
+            {
+                NombreOriginal = lista.ElementAt(lista.Count - 1).NombreOriginal;
+            }
+
         
     
            
