@@ -202,15 +202,79 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         public FileResult LZWCompress([FromRoute] string name, [FromForm] IFormFile File)
         {
 
-            return default;
+            var reader = new StreamReader(File.OpenReadStream());
+            string texto = reader.ReadToEnd();
+            reader.Close();
+            byte[] archivoComprimido = LZW.Compress(texto);
+
+            //GUARDANDO COMPRESIÓN
+            var newCompression = new CompModel();
+            string NombreOriginal = File.FileName;
+            double bytesOriginal = Convert.ToDouble(File.Length);
+            string NombreComprimido = ".lzw";
+            double factorDeCompresion = CalcularFactorCompresion(bytesOriginal, archivoComprimido.Length);
+            double razonDeCompresion = CalcularRazonCompresion(bytesOriginal, archivoComprimido.Length);
+            string PorcentajeReducion = CalcularPorcentajeReducción(razonDeCompresion);
+            var url = Request.Path;
+            var requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+            string rutaYnombre = requestUrl + url + NombreComprimido;
+            newCompression.NombreOriginal = NombreOriginal;
+            newCompression.NombreRutadeArchivo = rutaYnombre;
+            newCompression.FactorCompresion = factorDeCompresion;
+            newCompression.RazonCompresion = razonDeCompresion;
+            newCompression.PorcentajeReduccion = PorcentajeReducion;
+
+            return base.File(archivoComprimido, "compressedFile / lzw", name + ".lzw");
         }
 
-        [HttpPost("huffman/decompress")]
+        [HttpPost("lzw/decompress")]
         public async Task<FileResult> LZWDecompress([FromForm] IFormFile File)
         {
+            byte[] bytes;
+            using (var memory = new MemoryStream())
+            {
+                await File.CopyToAsync(memory);
 
 
-           
+                bytes = memory.ToArray();
+                List<byte> aux = bytes.OfType<byte>().ToList();
+
+            }
+            int i = 0;
+            byte[] maxBits = new byte[bytes.Length];
+            byte[] LargoDiccionario = new byte[bytes.Length];
+            byte[] CharsDiccionario = new byte[bytes.Length];
+          
+            var encoder = Encoding.GetEncoding(28591);
+            int j = 0;
+            while (bytes[i] != 0)
+            {
+
+                maxBits[j] = bytes[i];
+                i++;
+                j++;
+            }
+            i++;
+            j = 0;
+            while (bytes[i] != 0)
+            {
+
+                LargoDiccionario[j] = bytes[i];
+                i++;
+                j++;
+            }
+            string tamañoDicksionario = encoder.GetString(LargoDiccionario);
+            i++;
+            j = 0;
+            while (i != bytes.Length)
+            {
+               
+                CharsDiccionario[j] = bytes[i];
+                i++;
+                j++;
+            }
+
+
 
 
             return default;

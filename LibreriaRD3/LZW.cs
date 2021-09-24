@@ -71,7 +71,7 @@ namespace LibreriaRD3
         }
         public static byte[] Compress(string uncompressed)
         {
-            // build the dictionary
+            
             Dictionary<string, int> dictionary = new Dictionary<string, int>();
             string current = "";
             string currencharacter = "";
@@ -153,7 +153,7 @@ namespace LibreriaRD3
         }
         public static string Decompress(List<int> compressed)
         {
-            // build the dictionary
+            
             Dictionary<int, string> dictionary = new Dictionary<int, string>();
             for (int i = 0; i < 256; i++)
                 dictionary.Add(i, ((char)i).ToString());
@@ -172,7 +172,7 @@ namespace LibreriaRD3
 
                 decompressed.Append(entry);
 
-                // new sequence; add it to the dictionary
+                
                 dictionary.Add(dictionary.Count, w + entry[0]);
 
                 w = entry;
