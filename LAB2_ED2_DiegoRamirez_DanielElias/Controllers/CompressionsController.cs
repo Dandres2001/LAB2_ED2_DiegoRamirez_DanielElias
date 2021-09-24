@@ -52,7 +52,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         }
 
         // POST api/<CompressionsController>
-        [HttpPost("compress/{name}")]
+        [HttpPost("huffman/compress/{name}")]
         public FileResult Compress([FromRoute] string name,[FromForm] IFormFile File)
         {
             
@@ -111,7 +111,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         }
 
         // PUT api/<CompressionsController>/5
-        [HttpPost("decompress")]
+        [HttpPost("huffman/decompress")]
         public async Task<FileResult> Decompress([FromForm] IFormFile File)
         {
           
@@ -197,7 +197,25 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
            
             return base.File(bytesFinales,"text/plain", NombreOriginal);
         }
-        
+
+        [HttpPost("lzw/compress/{name}")]
+        public FileResult LZWCompress([FromRoute] string name, [FromForm] IFormFile File)
+        {
+
+            return default;
+        }
+
+        [HttpPost("huffman/decompress")]
+        public async Task<FileResult> LZWDecompress([FromForm] IFormFile File)
+        {
+
+
+           
+
+
+            return default;
+        }
+
         public string  message(byte[] aparaciones)
         {
             string mensaje = "";
