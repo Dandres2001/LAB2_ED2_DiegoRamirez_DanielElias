@@ -124,9 +124,13 @@ namespace LibreriaRD3
             {
                 compressed.Add(dictionary[current]);
             }
+
             int maxbits = Convert.ToInt32(Math.Log2(dictionary.Count + 1));
             str = encEncoder.GetString(ConvertToByte(Convert.ToString(maxbits)));
+            
             byte[] maximosbits = encEncoder.GetBytes(str);
+            str = encEncoder.GetString(ConvertToByte(Convert.ToString(compressed.Count)));
+            byte[] repeticiones = encEncoder.GetBytes(str);
             for (int k = 0; k < compressed.Count; k++)
             {
 
@@ -148,39 +152,116 @@ namespace LibreriaRD3
             }
       
             byte[] mensajebytes = encEncoder.GetBytes(Encodeascii(binary));
-            byte[] mensajefinal = Combine(maximosbits,separador, largoDiccionario,separador,  DiccionarioOriginal,mensajebytes);
+            byte[] mensajefinal = Combine(maximosbits,separador,repeticiones, separador,largoDiccionario,separador, DiccionarioOriginal,mensajebytes);
             return mensajefinal;
         }
-        public static string Decompress(List<int> compressed)
+        public static string Decompress(int maxbits, int repeticiones, List<byte> diccionario, List<byte> mensaje)
         {
             
-            Dictionary<int, string> dictionary = new Dictionary<int, string>();
-            for (int i = 0; i < 256; i++)
-                dictionary.Add(i, ((char)i).ToString());
-
-            string w = dictionary[compressed[0]];
-            compressed.RemoveAt(0);
-            StringBuilder decompressed = new StringBuilder(w);
-
-            foreach (int k in compressed)
+            Dictionary<int,string> dictionary = new Dictionary<int, string>();
+            var encoder = Encoding.GetEncoding(28591);
+            string diccionariostring = encoder.GetString(diccionario.ToArray());
+            foreach(char c in diccionariostring)
             {
-                string entry = null;
+                dictionary.Add( dictionary.Count + 1, c.ToString());
+            }
+
+            List<int> numerosmensaje=  decodeascii(mensaje, maxbits,repeticiones);
+
+            string w = dictionary[numerosmensaje[0]];
+            numerosmensaje.RemoveAt(0);
+            string decompressed =  w;
+
+            foreach (int k in numerosmensaje)
+            {
+                string entry = "";
                 if (dictionary.ContainsKey(k))
+                {
                     entry = dictionary[k];
+                }
                 else if (k == dictionary.Count)
+                {
                     entry = w + w[0];
+                }
+                decompressed+= entry;
 
-                decompressed.Append(entry);
 
-                
-                dictionary.Add(dictionary.Count, w + entry[0]);
+                dictionary.Add(dictionary.Count+1, w + entry[0]);
 
                 w = entry;
             }
 
-            return decompressed.ToString();
-        }
+            return decompressed;
 
+         
+        }
+        public static List<int> decodeascii(List<byte> value, int  maxbits, int repeticiones)
+        {
+            var returvalue = new List<int>();
+            byte[] bytearray = value.ToArray();
+            List<int> cadenanumeros = new List<int>();
+            string byte1= "";
+            for (int i = 0; i <bytearray.Length; i++)
+            {
+                for (int j=0; j<8; j++)
+                {
+                    returvalue.Add((bytearray[i] & 0x80) >0 ? 1:0);
+                    bytearray[i] <<= 1;
+                }
+            }
+            while (returvalue != null)
+            {
+
+                for (int i = 0; i < maxbits; i++)
+                {
+                    if (returvalue.Count > i)
+                    {
+                        byte1 += returvalue[i];
+                    }
+
+                }
+                if (returvalue.Count > maxbits)
+                {
+                    for (int i = 0; i < maxbits; i++)
+                    {
+                      returvalue.RemoveAt(0);
+                    }
+                }
+                else
+                {
+                   returvalue = null;
+
+                }
+
+                var encEncoder = System.Text.Encoding.GetEncoding(28591);
+
+                //string str = encEncoder.GetString(GetBytesFromBinaryString(bytearray));
+               string  result = Convert.ToString(Convert.ToInt32(byte1, 2), 10);
+                byte1 = "";
+                if (cadenanumeros.Count < repeticiones) {
+                    cadenanumeros.Add(Convert.ToInt32(result));
+                }
+        
+
+            }
+          
+       
+
+            return cadenanumeros;
+        }
+     
+
+
+
+
+          
+        
+    
+
+
+
+
+    
         public static byte[] Combine(params byte[][] arrays)
         { 
             byte[] rv = new byte[arrays.Sum(a => a.Length)];

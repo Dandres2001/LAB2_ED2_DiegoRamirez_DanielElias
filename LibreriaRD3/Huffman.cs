@@ -124,6 +124,7 @@ namespace LibreriaRD3
                 var encEncoder = System.Text.Encoding.GetEncoding(28591);
 
                 string str = encEncoder.GetString(GetBytesFromBinaryString(bytearray));
+               
                 bytearray = "";
 
                     

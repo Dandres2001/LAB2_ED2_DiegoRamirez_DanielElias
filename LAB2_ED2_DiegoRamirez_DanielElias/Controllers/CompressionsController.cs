@@ -241,43 +241,65 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
 
             }
             int i = 0;
-            byte[] maxBits = new byte[bytes.Length];
-            byte[] LargoDiccionario = new byte[bytes.Length];
-            byte[] CharsDiccionario = new byte[bytes.Length];
-          
+       
+            var maxBits = new List<Byte>();
+            var largodiccionario = new List<Byte>();
+            var repeticiones = new List<Byte>();
+            var chardiccionario = new List<Byte>();
+            var mensajecomprimido= new List<Byte>();
             var encoder = Encoding.GetEncoding(28591);
-            int j = 0;
+           
             while (bytes[i] != 0)
             {
 
-                maxBits[j] = bytes[i];
+                maxBits.Add(bytes[i]);
                 i++;
-                j++;
+             
             }
             i++;
-            j = 0;
+            string max = encoder.GetString(maxBits.ToArray());
+            int bitsmax = Convert.ToChar(max);
+            while (bytes[i] != 0)
+            {
+                repeticiones.Add(bytes[i]);
+                i++;
+            }
+            string repe = encoder.GetString(repeticiones.ToArray());
+            int repetir = Convert.ToChar(repe);
+            i++;
             while (bytes[i] != 0)
             {
 
-                LargoDiccionario[j] = bytes[i];
+                 largodiccionario.Add(bytes[i]);
                 i++;
-                j++;
+
             }
-            string tamañoDicksionario = encoder.GetString(LargoDiccionario);
             i++;
-            j = 0;
-            while (i != bytes.Length)
+            string tamañoDiccionario = encoder.GetString(largodiccionario.ToArray());
+            int largo = Convert.ToChar(tamañoDiccionario);
+            int z = 0;
+            while (largo !=z )
             {
                
-                CharsDiccionario[j] = bytes[i];
+                 chardiccionario.Add( bytes[i]);
+                z++;
                 i++;
-                j++;
+                
             }
 
+            while(i != bytes.Length)
+            {
+                mensajecomprimido.Add(bytes[i]);
+                i++;
+            }
 
+            string NombreOriginal = "default";
 
+            string mensajcomprimido =  LZW.Decompress(bitsmax, repetir, chardiccionario, mensajecomprimido);
+            byte[] bytesFinales = encoder.GetBytes(mensajcomprimido);
+            return base.File(bytesFinales, "text/plain", NombreOriginal);
 
-            return default;
+         
         }
 
         public string  message(byte[] aparaciones)
