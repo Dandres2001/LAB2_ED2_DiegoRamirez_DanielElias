@@ -248,6 +248,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             var chardiccionario = new List<Byte>();
             var mensajecomprimido= new List<Byte>();
             var encoder = Encoding.GetEncoding(28591);
+            var lista = Singleton.Instance.CompList;
            
             while (bytes[i] != 0)
             {
@@ -258,14 +259,22 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             }
             i++;
             string max = encoder.GetString(maxBits.ToArray());
-            int bitsmax = Convert.ToChar(max);
+            int bitsmax = 0;
+            foreach (char c in max)
+            {
+                bitsmax = bitsmax + c;
+            }
             while (bytes[i] != 0)
             {
                 repeticiones.Add(bytes[i]);
                 i++;
             }
             string repe = encoder.GetString(repeticiones.ToArray());
-            int repetir = Convert.ToChar(repe);
+            int repetir = 0;
+            foreach (char c in repe)
+            {
+                repetir = repetir + c;
+            }
             i++;
             while (bytes[i] != 0)
             {
@@ -276,7 +285,11 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             }
             i++;
             string tamañoDiccionario = encoder.GetString(largodiccionario.ToArray());
-            int largo = Convert.ToChar(tamañoDiccionario);
+            int largo = 0;
+            foreach (char c in tamañoDiccionario)
+            {
+                largo = largo + c;
+            }
             int z = 0;
             while (largo !=z )
             {
@@ -293,7 +306,16 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
                 i++;
             }
 
-            string NombreOriginal = "default";
+            string NombreOriginal;
+            if (lista.Count == 0)
+            {
+                NombreOriginal = "default";
+            }
+            else
+            {
+                NombreOriginal = lista.ElementAt(lista.Count - 1).NombreOriginal;
+            }
+
 
             string mensajcomprimido =  LZW.Decompress(bitsmax, repetir, chardiccionario, mensajecomprimido);
             byte[] bytesFinales = encoder.GetBytes(mensajcomprimido);

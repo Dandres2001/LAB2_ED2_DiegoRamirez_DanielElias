@@ -16,9 +16,19 @@ namespace LibreriaRD3
         }
         public static Byte[] ConvertToByte(string binary)
         {
-            var list = new List<Byte>();
 
-            list.Add(Convert.ToByte(binary));
+            var list = new List<Byte>();
+            int number = Convert.ToInt32(binary);
+
+            while (number > 255)
+            {
+                list.Add(Convert.ToByte(255));
+                number = number - 255;
+            }
+    
+                list.Add(Convert.ToByte(number));
+            
+           
 
             return list.ToArray();
         }
