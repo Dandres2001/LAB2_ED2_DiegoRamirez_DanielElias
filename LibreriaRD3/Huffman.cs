@@ -223,6 +223,16 @@ namespace LibreriaRD3
                 }
                 return returnValue;
             }
+
+        public byte[] Compress(string uncompressed)
+        {
+            throw new NotImplementedException();
         }
+
+        public string Decompress(int maxbits, int repeticiones, List<byte> diccionario, List<byte> mensaje)
+        {
+            throw new NotImplementedException();
+        }
+    }
     
 }

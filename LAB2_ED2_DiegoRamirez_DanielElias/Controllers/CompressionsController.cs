@@ -201,11 +201,11 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         [HttpPost("lzw/compress/{name}")]
         public FileResult LZWCompress([FromRoute] string name, [FromForm] IFormFile File)
         {
-
+            var compressor = new LZW<string>();
             var reader = new StreamReader(File.OpenReadStream());
             string texto = reader.ReadToEnd();
             reader.Close();
-            byte[] archivoComprimido = LZW.Compress(texto);
+            byte[] archivoComprimido = compressor.Compress(texto);
 
             //GUARDANDO COMPRESIÓN
             var newCompression = new CompModel();
@@ -230,6 +230,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         [HttpPost("lzw/decompress")]
         public async Task<FileResult> LZWDecompress([FromForm] IFormFile File)
         {
+            var compressor = new LZW<string>();
             byte[] bytes;
             using (var memory = new MemoryStream())
             {
@@ -317,7 +318,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             }
 
 
-            string mensajcomprimido =  LZW.Decompress(bitsmax, repetir, chardiccionario, mensajecomprimido);
+            string mensajcomprimido =  compressor.Decompress(bitsmax, repetir, chardiccionario, mensajecomprimido);
             byte[] bytesFinales = encoder.GetBytes(mensajcomprimido);
             return base.File(bytesFinales, "text/plain", NombreOriginal);
 

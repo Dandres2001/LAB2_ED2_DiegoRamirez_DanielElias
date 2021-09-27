@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 namespace LibreriaRD3
 {
-    public class LZW
+    public class LZW<T> : ICompressor<T>
     {
         public static Byte[] GetBytesFromBinaryString(string binary)
         {
@@ -79,7 +79,8 @@ namespace LibreriaRD3
 
             return completeline;
         }
-        public static byte[] Compress(string uncompressed)
+
+        public byte[] Compress(string uncompressed)
         {
             
             Dictionary<string, int> dictionary = new Dictionary<string, int>();
@@ -165,7 +166,7 @@ namespace LibreriaRD3
             byte[] mensajefinal = Combine(maximosbits,separador,repeticiones, separador,largoDiccionario,separador, DiccionarioOriginal,mensajebytes);
             return mensajefinal;
         }
-        public static string Decompress(int maxbits, int repeticiones, List<byte> diccionario, List<byte> mensaje)
+        public string Decompress(int maxbits, int repeticiones, List<byte> diccionario, List<byte> mensaje)
         {
             
             Dictionary<int,string> dictionary = new Dictionary<int, string>();
@@ -290,6 +291,16 @@ namespace LibreriaRD3
                 offset += array.Length;
             }
             return rv;
+        }
+
+        public void Encode(T value, List<int> encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<T> Decode(List<int> bitString)
+        {
+            throw new NotImplementedException();
         }
     }
 }

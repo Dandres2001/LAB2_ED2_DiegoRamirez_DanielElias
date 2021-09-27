@@ -9,12 +9,12 @@ namespace ConsolaLab2
     {
         static void Main(string[] args)
         {
-            var lzw = new LZW();
-            byte[] compressed = LZW.Compress("WABBAWABBAWABBAWABBA");
-            Console.WriteLine(string.Join(", ", compressed));
-            //string decompressed = LZW.Decompress(compressed);
-            //Console.WriteLine(decompressed);
-            Console.ReadKey();
+            //var lzw = new LZW();
+            //byte[] compressed = LZW.Compress("WABBAWABBAWABBAWABBA");
+            //Console.WriteLine(string.Join(", ", compressed));
+            ////string decompressed = LZW.Decompress(compressed);
+            ////Console.WriteLine(decompressed);
+            //Console.ReadKey();
            
             
         }
