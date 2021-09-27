@@ -178,9 +178,9 @@ namespace LibreriaRD3
 
             List<int> numerosmensaje=  decodeascii(mensaje, maxbits,repeticiones);
 
-            string w = dictionary[numerosmensaje[0]];
+            string previous = dictionary[numerosmensaje[0]];
             numerosmensaje.RemoveAt(0);
-            string decompressed =  w;
+            string decompressed =  previous;
 
             foreach (int k in numerosmensaje)
             {
@@ -191,14 +191,22 @@ namespace LibreriaRD3
                 }
                 else if (k == dictionary.Count)
                 {
-                    entry = w + w[0];
+                    entry = previous + previous[0];
+                }
+                else
+                {
+                 
+                        entry = previous + previous[0];
+                        dictionary.Add(dictionary.Count + 1, entry);
+                            
+                
                 }
                 decompressed+= entry;
 
 
-                dictionary.Add(dictionary.Count+1, w + entry[0]);
+                dictionary.Add(dictionary.Count+1, previous + entry[0]);
 
-                w = entry;
+                previous = entry;
             }
 
             return decompressed;
