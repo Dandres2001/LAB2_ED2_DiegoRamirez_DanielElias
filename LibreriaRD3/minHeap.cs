@@ -4,138 +4,57 @@ using System.Text;
 
 namespace LibreriaRD3
 {
+    public class minHeap<T>
+    {
+       
+       
+        public int Cont { get; private set; }
+        public minHeap() : this(null) { }
+        public minHeap(int capacidad) : this(capacidad, null) { }
+        public minHeap(IComparer<T> comparador) : this(16, comparador) { }
+        T[] heap;
+        IComparer<T> comparador;
+        public minHeap(int Capacidad, IComparer<T> Comparador)
 
-        public class minHeap<T> where T : IComparable
         {
-            protected List<T> HeapList = new List<T>();
-
-            public virtual int Count
+            this.comparador = (Comparador == null) ? Comparer<T>.Default : Comparador;
+            this.heap = new T[Capacidad];
+        }
+        public void push(T v)
+        {
+            if (Cont >= heap.Length) Array.Resize(ref heap, Cont * 2);
+            heap[Cont] = v;
+            SiftUp(Cont++);
+        }
+        public T Pop()
+        {
+            var v = EncontrarUltimo();
+            heap[0] = heap[--Cont];
+            if (Cont > 0) SiftDown(0);
+            return v;
+        }
+        void SiftUp(int indice)
+        {
+            var v = heap[indice];
+            for (var n2 = indice / 2; indice > 0 && comparador.Compare(v, heap[n2]) > 0; indice = n2, n2 /= 2) heap[indice] = heap[n2];
+            heap[indice] = v;
+        }
+        void SiftDown(int indice)
+        {
+            var v = heap[indice];
+            for (var n2 = indice * 2; n2 < Cont; indice = n2, n2 *= 2)
             {
-                get { return HeapList.Count; }
+                if (n2 + 1 < Cont && comparador.Compare(heap[n2 + 1], heap[n2]) > 0) n2++;
+                if (comparador.Compare(v, heap[n2]) >= 0) break;
+                heap[indice] = heap[n2];
             }
-
-            public virtual void Add(T val)
-            {
-                HeapList.Add(val);
-                SetAtPosition(HeapList.Count - 1, val);
-                UpHeap(HeapList.Count - 1);
-            }
-
-            public virtual T Peek()
-            {
-                if (HeapList.Count == 0)
-                {
-                    throw new IndexOutOfRangeException("Peeking at an empty priority queue");
-                }
-
-                return HeapList[0];
-            }
-
-            public virtual T Pop()
-            {
-                if (HeapList.Count == 0)
-                {
-                    throw new IndexOutOfRangeException("Popping an empty priority queue");
-                }
-
-                T valRet = HeapList[0];
-
-                SetAtPosition(0, HeapList[HeapList.Count - 1]);
-                HeapList.RemoveAt(HeapList.Count - 1);
-                DownHeap(0);
-                return valRet;
-            }
-
-            protected virtual void SetAtPosition(int i, T val)
-            {
-                HeapList[i] = val;
-            }
-
-            protected bool RightExists(int i)
-            {
-                return RightChildIndex(i) < HeapList.Count;
-            }
-
-            protected bool LeftExists(int i)
-            {
-                return LeftChildIndex(i) < HeapList.Count;
-            }
-
-            protected int ParentIndex(int i)
-            {
-                return (i - 1) / 2;
-            }
-
-            protected int LeftChildIndex(int i)
-            {
-                return 2 * i + 1;
-            }
-
-            protected int RightChildIndex(int i)
-            {
-                return 2 * (i + 1);
-            }
-
-            protected T ArrayValue(int i)
-            {
-                return HeapList[i];
-            }
-
-            protected T Parent(int i)
-            {
-                return HeapList[ParentIndex(i)];
-            }
-
-            protected T Left(int i)
-            {
-                return HeapList[LeftChildIndex(i)];
-            }
-
-            protected T Right(int i)
-            {
-                return HeapList[RightChildIndex(i)];
-            }
-
-            protected void Swap(int i, int j)
-            {
-                T valHold = ArrayValue(i);
-                SetAtPosition(i, HeapList[j]);
-                SetAtPosition(j, valHold);
-            }
-
-            protected void UpHeap(int i)
-            {
-                while (i > 0 && ArrayValue(i).CompareTo(Parent(i)) > 0)
-                {
-                    Swap(i, ParentIndex(i));
-                    i = ParentIndex(i);
-                }
-            }
-
-            protected void DownHeap(int i)
-            {
-                while (i >= 0)
-                {
-                    int ic = -1;
-
-                    if (RightExists(i) && Right(i).CompareTo(ArrayValue(i)) > 0)
-                    {
-                        ic = Left(i).CompareTo(Right(i)) < 0 ? RightChildIndex(i) : LeftChildIndex(i);
-                    }
-                    else if (LeftExists(i) && Left(i).CompareTo(ArrayValue(i)) > 0)
-                    {
-                        ic = LeftChildIndex(i);
-                    }
-
-                    if (ic >= 0 && ic < HeapList.Count)
-                    {
-                        Swap(i, ic);
-                    }
-
-                    i = ic;
-                }
-            }
+            heap[indice] = v;
+        }
+        public T EncontrarUltimo()
+        {
+            if (Cont > 0) return heap[0];
+            throw new InvalidOperationException("There are no elements in the priority queue");
         }
 
     }
-
+}
