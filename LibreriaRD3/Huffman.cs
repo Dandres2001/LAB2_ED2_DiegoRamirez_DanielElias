@@ -233,6 +233,28 @@ namespace LibreriaRD3
         {
             throw new NotImplementedException();
         }
+
+  
+
+        public byte[] Compress(byte[] uncompressed)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] Decompress(byte[] mensaje)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] Decompress(List<byte> diccionario, List<byte> mensaje)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] Decompress(byte[] diccionario, byte[] mensaje)
+        {
+            throw new NotImplementedException();
+        }
     }
     
 }

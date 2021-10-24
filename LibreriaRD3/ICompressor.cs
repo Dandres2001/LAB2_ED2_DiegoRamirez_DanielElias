@@ -10,8 +10,8 @@ namespace LibreriaRD3
 
         public List<T> Decode(List<int> bitString);
 
-        public byte[] Compress (string uncompressed);
+        public byte[] Compress (byte[] uncompressed);
 
-        public string Decompress(int maxbits, int repeticiones, List<byte> diccionario, List<byte> mensaje);
+        public byte[] Decompress(byte[] diccionario, byte[] mensaje );
     }
 }

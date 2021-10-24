@@ -199,13 +199,22 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         }
 
         [HttpPost("lzw/compress/{name}")]
-        public FileResult LZWCompress([FromRoute] string name, [FromForm] IFormFile File)
+        public async Task<FileResult> LZWCompress([FromRoute] string name, [FromForm] IFormFile File)
         {
             var compressor = new LZW<string>();
-            var reader = new StreamReader(File.OpenReadStream());
-            string texto = reader.ReadToEnd();
-            reader.Close();
-            byte[] archivoComprimido = compressor.Compress(texto);
+           
+            byte[] bytes;
+
+            using (var memory = new MemoryStream())
+            {
+                await File.CopyToAsync(memory);
+
+
+                bytes = memory.ToArray();
+
+
+            }
+            byte[] archivoComprimido = compressor.Compress(bytes);
 
             //GUARDANDO COMPRESIÓN
             var newCompression = new CompModel();
@@ -238,70 +247,45 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
 
 
                 bytes = memory.ToArray();
-                List<byte> aux = bytes.OfType<byte>().ToList();
+
 
             }
-            int i = 0;
-       
-            var maxBits = new List<Byte>();
+
+
             var largodiccionario = new List<Byte>();
-            var repeticiones = new List<Byte>();
             var chardiccionario = new List<Byte>();
-            var mensajecomprimido= new List<Byte>();
-            var encoder = Encoding.GetEncoding(28591);
+            var mensajecomprimido = new List<Byte>();
+       
             var lista = Singleton.Instance.CompList;
-           
+            int i = 0;
+          
+         
+          
+       
             while (bytes[i] != 0)
             {
 
-                maxBits.Add(bytes[i]);
-                i++;
-             
-            }
-            i++;
-            string max = encoder.GetString(maxBits.ToArray());
-            int bitsmax = 0;
-            foreach (char c in max)
-            {
-                bitsmax = bitsmax + c;
-            }
-            while (bytes[i] != 0)
-            {
-                repeticiones.Add(bytes[i]);
-                i++;
-            }
-            string repe = encoder.GetString(repeticiones.ToArray());
-            int repetir = 0;
-            foreach (char c in repe)
-            {
-                repetir = repetir + c;
-            }
-            i++;
-            while (bytes[i] != 0)
-            {
-
-                 largodiccionario.Add(bytes[i]);
+                largodiccionario.Add(bytes[i]);
                 i++;
 
             }
             i++;
-            string tamañoDiccionario = encoder.GetString(largodiccionario.ToArray());
-            int largo = 0;
-            foreach (char c in tamañoDiccionario)
+           int  largo = 0;
+            foreach (byte c in largodiccionario)
             {
-                largo = largo + c;
+                largo += Convert.ToInt32(c);
             }
             int z = 0;
-            while (largo !=z )
+            while (largo != z)
             {
-               
-                 chardiccionario.Add( bytes[i]);
+
+                chardiccionario.Add(bytes[i]);
                 z++;
                 i++;
-                
+
             }
 
-            while(i != bytes.Length)
+            while (i != bytes.Length)
             {
                 mensajecomprimido.Add(bytes[i]);
                 i++;
@@ -318,9 +302,9 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             }
 
 
-            string mensajcomprimido =  compressor.Decompress(bitsmax, repetir, chardiccionario, mensajecomprimido);
-            byte[] bytesFinales = encoder.GetBytes(mensajcomprimido);
-            return base.File(bytesFinales, "text/plain", NombreOriginal);
+            byte[] mensajcomprimido = compressor.Decompress( chardiccionario.ToArray(), mensajecomprimido.ToArray());
+
+            return base.File(mensajcomprimido, "text/ plain", "jeje"+ ".pdf");
 
          
         }
