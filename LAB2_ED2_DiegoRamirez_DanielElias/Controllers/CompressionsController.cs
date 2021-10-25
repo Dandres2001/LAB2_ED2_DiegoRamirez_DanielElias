@@ -32,7 +32,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         // GET api/<CompressionsController>/5
         
         [HttpGet("compressions")]
-        public string GetCompressions([FromRoute] string recorrido)
+        public string GetCompressions()
         {
             string returnJson = "";
 
@@ -235,6 +235,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
             newCompression.FactorCompresion = factorDeCompresion;
             newCompression.RazonCompresion = razonDeCompresion;
             newCompression.PorcentajeReduccion = PorcentajeReducion;
+            Singleton.Instance.CompList.Add(newCompression);
 
             return base.File(archivoComprimido, "compressedFile / lzw", name + ".lzw");
         }
