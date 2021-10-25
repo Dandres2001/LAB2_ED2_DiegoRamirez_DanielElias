@@ -312,7 +312,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
         }
         public string CalcularPorcentajeReducción(double factorDeCompresión)
         {
-            double Porcentaje = Math.Round((1 - factorDeCompresión)*100);
+            double Porcentaje =Math.Abs( Math.Round((1 - factorDeCompresión)*100));
             string resultado = Porcentaje + "%";
             return resultado;
         }
