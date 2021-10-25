@@ -22,7 +22,8 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
     [ApiController]
     public class CompressionsController : ControllerBase
     {
-
+        static string ORIGINALFILENAME;
+        static string ORIGINALCONTENT;
         [HttpGet]
         public IEnumerable<string> Get()
         {
@@ -205,6 +206,8 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
            
             byte[] bytes;
 
+            ORIGINALCONTENT = File.ContentType;
+            ORIGINALFILENAME = File.FileName;
             using (var memory = new MemoryStream())
             {
                 await File.CopyToAsync(memory);
@@ -304,7 +307,7 @@ namespace LAB2_ED2_DiegoRamirez_DanielElias.Controllers
 
             byte[] mensajcomprimido = compressor.Decompress( chardiccionario.ToArray(), mensajecomprimido.ToArray());
 
-            return base.File(mensajcomprimido, "text/ plain", "jeje"+ ".pdf");
+            return base.File(mensajcomprimido, ORIGINALCONTENT, ORIGINALFILENAME);
 
          
         }
